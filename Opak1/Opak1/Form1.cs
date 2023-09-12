@@ -18,11 +18,18 @@ namespace Opak1
         }
 
         List<int> list1 = new List<int>();
+        List<char> list2 = new List<char>();
 
         public void Vypis(List<int> l, ListBox lb)
         {
             lb.Items.Clear();
             foreach (int s in l)
+                lb.Items.Add(s);
+        }
+        public void Vypis(List<char> l, ListBox lb)
+        {
+            lb.Items.Clear();
+            foreach (char s in l)
                 lb.Items.Add(s);
         }
 
@@ -38,7 +45,10 @@ namespace Opak1
                     max = i;
                 }
             }
-            return dMax;
+            if(dMax != int.MinValue)
+                return dMax;
+            else
+                return 0;
         }
 
         public int Max(List<int> l)
@@ -76,11 +86,14 @@ namespace Opak1
 
         public void VymazDok(List<int> l)
         {
+            List<int> doko = new List<int>();
             foreach(int i in l)
             {
                 if (Dokonale(i))
-                    l.Remove(i);
+                    doko.Add(i);
             }
+            foreach(int i in doko)
+                l.Remove(i);
         }
 
         public int CifSouc(int cislo)
@@ -100,6 +113,7 @@ namespace Opak1
 
         private void button1_Click(object sender, EventArgs e)
         {
+            list1.Clear();
             int n;
             try
             {
@@ -137,7 +151,7 @@ namespace Opak1
                 pocet++;
             }
 
-            MessageBox.Show("Průměr: " + (souc / pocet));
+            MessageBox.Show("Průměr: " + Math.Round((double)souc / pocet, 2));
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -150,6 +164,110 @@ namespace Opak1
             MessageBox.Show("Cif Součet: " + CifSouc(Max(list1)));
         }
 
+        private void button7_Click(object sender, EventArgs e)
+        {
+            list2.Clear();
+            foreach(int i in list1)
+            {
+                if (i >= 'A' && i <= 'Z')
+                    list2.Add((char)i);
+                else
+                    list2.Add('*');
+            }
+            Vypis(list2, listBox4);
+        }
 
+
+        // druhý příklad
+
+
+        public int PoslPrvocislo(int[] pole, ref int index)
+        {
+            int cislo = 0;
+            index = 0;
+            for(int i = 0; i < pole.Length; i++)
+            {
+                if (JePrvocislo(pole[i]))
+                {
+                    cislo = pole[i];
+                    index = i;
+                }
+            }
+
+            return cislo;
+        }
+
+        void Vymen(int[] pole)
+        {
+            int pomocna = pole[0];
+            pole[0] = pole[pole.Length - 1];
+            pole[pole.Length - 1] = pomocna;
+        }
+
+        public void Vypis(int[] pole , ListBox lb)
+        {
+            lb.Items.Clear();
+            foreach(int i in pole)
+                lb.Items.Add(i);
+        }
+
+        bool JePrvocislo(int cislo)
+        {
+            bool vysledek = (cislo % 2 != 0 || cislo == 2) && !(cislo == 1 || cislo == 0);
+            for (int i = 3; i <= Math.Sqrt(cislo) && vysledek != false; i += 2)
+            {
+                vysledek = cislo % i != 0;
+            }
+            return vysledek;
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            int n;
+            try
+            {
+                n = int.Parse(textBox2.Text);
+                int[] pole = new int[n];
+                for (int i = 0; i < n; i++)
+                {
+                    pole[i] = r.Next(1, 26);
+                }
+
+                Vypis(pole, listBox5);
+                int index = 0;
+                MessageBox.Show("Prvocislo: "+PoslPrvocislo(pole,ref index)+" Index: "+index);
+                Vymen(pole);
+                Vypis(pole, listBox6);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Zadej dobrý číslo "+ex);
+            }
+        }
+
+
+        string Maximalni(string veta,string parametr)
+        {
+            string[] slova = veta.Split(' ');
+            int index = 0,max = -1, maxLength = 0;
+            foreach(string s in slova)
+            {
+                if (s.Contains(parametr) && s.Length > maxLength)
+                {
+                    max = index;
+                    maxLength = s.Length;
+                }
+                index++;
+            }
+            if (max == -1)
+                return "";
+            else
+                return slova[max];
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(Maximalni(textBox3.Text, textBox4.Text));
+        }
     }
 }
